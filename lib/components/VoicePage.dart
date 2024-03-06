@@ -59,15 +59,15 @@ class _VoicePageState extends State<VoicePage> {
   void _processCommand(String command) {
     command = command.toLowerCase();
     if (command.contains('forward')) {
-      _sendMessage('forward');
+      _sendMessage('F');
     } else if (command.contains('back')) {
-      _sendMessage('back');
+      _sendMessage('B');
     } else if (command.contains('stop')) {
-      _sendMessage('stop');
+      _sendMessage('S');
     } else if (command.contains('left')) {
-      _sendMessage('left');
+      _sendMessage('L');
     } else if (command.contains('right')) {
-      _sendMessage('right');
+      _sendMessage('R');
     } else {
       print("Unknown Commends");
     }
