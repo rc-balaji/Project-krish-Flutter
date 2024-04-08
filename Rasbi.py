@@ -50,7 +50,7 @@ def process_command(command):
 
 def main():
     host = ''  # Listen on all available interfaces
-    port = 12345  # Port number
+    port = 80  # Port number
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))

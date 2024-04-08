@@ -5,7 +5,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class VoicePage extends StatefulWidget {
-  final Socket socket; // Change to accept a Socket instance
+  final Socket socket;
   final String ip;
 
   VoicePage({required this.socket, required this.ip});
@@ -17,8 +17,7 @@ class VoicePage extends StatefulWidget {
 class _VoicePageState extends State<VoicePage> {
   final SpeechToText _speechToText = SpeechToText();
   bool _isListening = false;
-  String _lastWords = '';
-  String _displayedText = ''; // Add this line
+  String _displayedText = '';
 
   @override
   void initState() {
@@ -34,7 +33,7 @@ class _VoicePageState extends State<VoicePage> {
   void _startListening() async {
     setState(() {
       _isListening = true;
-      _lastWords = ''; // Clear the last recognized words at the start
+      _displayedText = ''; // Reset displayed text
     });
     await _speechToText.listen(onResult: _onSpeechResult);
   }
@@ -47,12 +46,9 @@ class _VoicePageState extends State<VoicePage> {
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) {
-    // Update the last recognized words and displayed text with the current result
     setState(() {
-      _lastWords = result.recognizedWords;
-      _displayedText = _lastWords;
-      // print(_displayedText);
-      _processCommand(_displayedText.trim()); // Update the displayed text
+      _displayedText = result.recognizedWords;
+      _processCommand(_displayedText.trim());
     });
   }
 
@@ -74,6 +70,7 @@ class _VoicePageState extends State<VoicePage> {
   }
 
   void _showUnknownCommandDialog(String command) {
+    // Shows a dialog for unknown commands
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -83,9 +80,7 @@ class _VoicePageState extends State<VoicePage> {
           actions: <Widget>[
             TextButton(
               child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the alert dialog
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
         );
@@ -95,8 +90,8 @@ class _VoicePageState extends State<VoicePage> {
 
   void _sendMessage(String message) {
     if (widget.socket != null && message.isNotEmpty) {
-      widget.socket!.add(utf8.encode(message));
-      widget.socket!.flush();
+      widget.socket.add(utf8.encode(message));
+      widget.socket.flush();
     }
   }
 
@@ -105,70 +100,57 @@ class _VoicePageState extends State<VoicePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Voice Controls'),
+        backgroundColor: Color.fromARGB(255, 23, 160, 229),
         actions: [
           IconButton(
             icon: Icon(Icons.power_settings_new, color: Colors.red),
-            onPressed: () {
-              widget.socket?.close();
-              Navigator.pop(
-                  context); // Adjusted to simply pop back without disconnecting
-            },
+            onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Say a command to control the light:',
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ),
-          Text(
-            _isListening
-                ? 'Listening...'
-                : 'Press & Hold the button below to speak',
-            style: TextStyle(fontSize: 16.0, color: Colors.blue),
-          ),
-          SizedBox(height: 20), // Add some spacing
-          // Display the recognized command
-          Text(
-            _displayedText, // Display the last recognized words here
-            style: TextStyle(fontSize: 24.0, color: Colors.black),
-          ),
-          SizedBox(height: 20), // Add some spacing
-          GestureDetector(
-            onLongPress: _startListening,
-            onLongPressUp: _stopListening,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(100),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.25,
               ),
-              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(_isListening ? Icons.mic_off : Icons.mic,
-                      color: Colors.white),
-                  SizedBox(width: 8),
-                  Text(
-                    _isListening ? 'Stop Listening' : 'Start Listening',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'Say a command:',
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                child: Text(
+                  _isListening ? 'Listening...' : 'Tap the mic to start',
+                  style: TextStyle(
+                      fontSize: 18.0, color: Theme.of(context).primaryColor),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  _displayedText,
+                  style: TextStyle(fontSize: 20.0),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 20),
+              FloatingActionButton(
+                onPressed: _isListening ? _stopListening : _startListening,
+                child: Icon(_isListening ? Icons.mic_off : Icons.mic),
+                backgroundColor: _isListening ? Colors.red : Colors.blue,
+              ),
+            ],
           ),
-          SizedBox(height: 20), // Add some spacing
-          // // ElevatedButton(
-          //   onPressed: _disconnect,
-          //   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          //   child: Text('Disconnect'),
-          // ),
-        ],
+        ),
       ),
     );
   }

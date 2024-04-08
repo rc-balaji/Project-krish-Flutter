@@ -13,7 +13,7 @@ def get_ip_address():
         s.close()
     return ip
 
-def start_server(port=12345):
+def start_server(port=80):
     host = get_ip_address()  # Use the actual IP address here
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))

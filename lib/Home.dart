@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'ControlPage.dart'; // Make sure this import points to your ControlPage correctly
+import 'ControlPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,13 +14,11 @@ class _HomePageState extends State<HomePage> {
   void _checkAndNavigate() async {
     String ip = _ipController.text;
     try {
-      _socket = await Socket.connect(ip, 12345, timeout: Duration(seconds: 5));
-      // Instead of closing the socket, you keep it open and pass it to the next page
+      _socket = await Socket.connect(ip, 80, timeout: Duration(seconds: 5));
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ControlPage(
-                socket: _socket!, ip: ip)), // Pass the socket to ControlPage
+            builder: (context) => ControlPage(socket: _socket!, ip: ip)),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -34,40 +32,47 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Use MediaQuery for responsive layout
+    var size = MediaQuery.of(context).size;
+    var paddingTop = MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Connect to Server'),
-        backgroundColor: Colors.white, // Customizing AppBar color
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0), // Adding padding around the body
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextField(
-                controller: _ipController,
-                decoration: InputDecoration(
-                  hintText: 'Enter IP Address',
-                  border:
-                      OutlineInputBorder(), // Adding border to the TextField
-                  filled: true, // Adding fill color
-                  fillColor: Colors.grey[200], // Customizing fill color
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Image.asset(
+                    'assets/images/logo.png', // Replace with your image asset
+                    width: size.width * 0.4,
+                    height: size.height * 0.1,
+                    fit: BoxFit.contain,
+                  ),
                 ),
-              ),
-              SizedBox(
-                  height: 20), // Adding space between the text field and button
-              ElevatedButton(
-                onPressed: _checkAndNavigate,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // Customizing button color
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 20), // Customizing button padding
+                SizedBox(height: 20),
+                TextField(
+                  controller: _ipController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter IP Address',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
                 ),
-                child: Text('Check Availability and Connect'),
-              ),
-            ],
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _checkAndNavigate,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 19, 221, 80),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  ),
+                  child: Text('Check and Connect'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

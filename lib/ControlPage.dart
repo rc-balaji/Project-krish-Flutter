@@ -20,7 +20,6 @@ class _ControlPageState extends State<ControlPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize _children here, passing both socket and ip to the pages
     _children = [
       VoicePage(socket: widget.socket, ip: widget.ip),
       ManualControlsPage(socket: widget.socket, ip: widget.ip),
@@ -36,7 +35,12 @@ class _ControlPageState extends State<ControlPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _children[_currentIndex],
+      body: SafeArea(
+        child: IndexedStack(
+          index: _currentIndex,
+          children: _children,
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped,
         currentIndex: _currentIndex,
@@ -50,6 +54,11 @@ class _ControlPageState extends State<ControlPage> {
             label: 'Manual',
           ),
         ],
+        backgroundColor: Color.fromARGB(255, 23, 160, 229),
+        selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+        unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+        type: BottomNavigationBarType.fixed,
+        showUnselectedLabels: true,
       ),
     );
   }
