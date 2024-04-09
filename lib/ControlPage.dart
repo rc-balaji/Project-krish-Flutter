@@ -21,8 +21,8 @@ class _ControlPageState extends State<ControlPage> {
   void initState() {
     super.initState();
     _children = [
-      VoicePage(socket: widget.socket, ip: widget.ip),
       ManualControlsPage(socket: widget.socket, ip: widget.ip),
+      VoicePage(socket: widget.socket, ip: widget.ip),
     ];
   }
 
@@ -46,12 +46,12 @@ class _ControlPageState extends State<ControlPage> {
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.mic),
-            label: 'Voice',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.touch_app),
             label: 'Manual',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mic),
+            label: 'Voice',
           ),
         ],
         backgroundColor: Color.fromARGB(255, 23, 160, 229),

@@ -64,7 +64,7 @@ class _ManualControlsPageState extends State<ManualControlsPage> {
       padding: const EdgeInsets.all(8.0),
       child: Ink(
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 173, 41, 41), // Button color
+          color: Color.fromARGB(255, 232, 8, 8), // Button color
           shape: BoxShape.circle,
         ),
         child: InkWell(
@@ -75,7 +75,8 @@ class _ManualControlsPageState extends State<ManualControlsPage> {
             child: Icon(
               icon,
               size: size,
-              color: Colors.white, // Icon color for better contrast
+              color: const Color.fromARGB(
+                  255, 0, 0, 0), // Icon color for better contrast
             ),
           ),
         ),
