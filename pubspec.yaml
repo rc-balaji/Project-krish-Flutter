@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.2.1
+  http: ^0.13.6
   speech_to_text: ^6.6.1
   wifi_iot: ^0.3.19
   flutter_material_pickers: ^3.6.0
@@ -38,6 +38,7 @@ dependencies:
   location: ^6.0.1
   shared_preferences: ^2.2.2
   permission_handler: ^11.3.1
+  flutter_mjpeg: ^2.0.4
 
 # speech_recognition: ^0.5.0+1
 # speech_recognition: ^0.5.0+1

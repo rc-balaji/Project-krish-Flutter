@@ -2,35 +2,40 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:my_first_app/stream_page.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'ControlPage.dart';
+import 'WebcamPage.dart';
 
 class NetworkConfiguration {
   String name;
   String ipAddress;
   String wifiName;
+  String type;
 
   NetworkConfiguration({
     required this.name,
     required this.ipAddress,
     required this.wifiName,
+    required this.type,
   });
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'ipAddress': ipAddress,
         'wifiName': wifiName,
+        'type': type
       };
 
   factory NetworkConfiguration.fromJson(Map<String, dynamic> jsonData) {
     return NetworkConfiguration(
-      name: jsonData['name'],
-      ipAddress: jsonData['ipAddress'],
-      wifiName: jsonData['wifiName'],
-    );
+        name: jsonData['name'],
+        ipAddress: jsonData['ipAddress'],
+        wifiName: jsonData['wifiName'],
+        type: jsonData['type']);
   }
 }
 
@@ -96,61 +101,90 @@ class _HomePageState extends State<HomePage> {
     TextEditingController ipController =
         TextEditingController(text: config?.ipAddress ?? '');
     String wifiName = _currentWiFi;
+    String selectedType = config?.type ?? 'Node';
 
     bool confirmed = await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(
-                config == null ? 'Add Network' : 'Edit Network',
-                style: TextStyle(color: Color.fromARGB(255, 23, 160, 229)),
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        labelText: "Name",
-                        labelStyle:
-                            TextStyle(color: Color.fromARGB(255, 23, 160, 229)),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: Text(
+                  config == null ? 'Add Network' : 'Edit Network',
+                  style: TextStyle(color: Color.fromARGB(255, 23, 160, 229)),
+                ),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          labelText: "Name",
+                          labelStyle: TextStyle(
                               color: Color.fromARGB(255, 23, 160, 229)),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 23, 160, 229)),
+                          ),
                         ),
                       ),
-                    ),
-                    TextField(
-                      controller: ipController,
-                      decoration: InputDecoration(
-                        labelText: "IP Address",
-                        labelStyle:
-                            TextStyle(color: Color.fromARGB(255, 23, 160, 229)),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
+                      TextField(
+                        controller: ipController,
+                        decoration: InputDecoration(
+                          labelText: "IP Address",
+                          labelStyle: TextStyle(
                               color: Color.fromARGB(255, 23, 160, 229)),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 23, 160, 229)),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      DropdownButton<String>(
+                        value: selectedType,
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              selectedType = newValue;
+                            });
+                          }
+                        },
+                        items: <String>['Node', 'Cam'].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value,
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 23, 160, 229))),
+                          );
+                        }).toList(),
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 23, 160, 229),
+                            fontSize: 16),
+                        dropdownColor: Colors.white,
+                        underline: Container(
+                          height: 2,
+                          color: Color.fromARGB(255, 23, 160, 229),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Cancel',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 23, 160, 229))),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
-                TextButton(
-                  child: Text('Save',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 23, 160, 229))),
-                  onPressed: () => Navigator.of(context).pop(true),
-                ),
-              ],
-            );
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Cancel',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 23, 160, 229))),
+                    onPressed: () => Navigator.of(context).pop(false),
+                  ),
+                  TextButton(
+                    child: Text('Save',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 23, 160, 229))),
+                    onPressed: () => Navigator.of(context).pop(true),
+                  ),
+                ],
+              );
+            });
           },
         ) ??
         false;
@@ -162,12 +196,14 @@ class _HomePageState extends State<HomePage> {
             name: nameController.text,
             ipAddress: ipController.text,
             wifiName: wifiName,
+            type: selectedType,
           ));
         } else {
           networkConfigs[index] = NetworkConfiguration(
             name: nameController.text,
             ipAddress: ipController.text,
-            wifiName: config!.wifiName,
+            wifiName: wifiName,
+            type: selectedType,
           );
         }
       });
@@ -197,6 +233,15 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
                     'Name: ${config.name}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'Type: ${config.type}',
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                     ),
@@ -243,32 +288,40 @@ class _HomePageState extends State<HomePage> {
     if (config.wifiName == _currentWiFi) {
       showDialog(
         context: context,
-        barrierDismissible:
-            false, // Prevent dismissing the dialog by tapping outside
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return Center(
             child: CircularProgressIndicator(
               color: Color.fromARGB(255, 23, 160, 229),
-            ), // Display a circular progress indicator
+            ),
           );
         },
       );
 
       try {
-        Socket socket = await Socket.connect(config.ipAddress, 80,
-            timeout: Duration(seconds: 5));
-        Navigator.pop(context); // Dismiss the loading indicator dialog
-        // Pushing the ControlPage with the established socket and IP
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                ControlPage(socket: socket, ip: config.ipAddress),
-          ),
-        );
+        if (config.type == 'Node') {
+          Socket socket = await Socket.connect(config.ipAddress, 80,
+              timeout: Duration(seconds: 5));
+          Navigator.pop(context);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ControlPage(socket: socket, ip: config.ipAddress),
+            ),
+          );
+        } else if (config.type == 'Cam') {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => StreamPage(ip: config.ipAddress),
+            ),
+          );
+        }
       } catch (e) {
-        Navigator.pop(context); // Dismiss the loading indicator dialog
-        // Handle the error, perhaps show a dialog to the user
+        Navigator.pop(context);
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -284,7 +337,6 @@ class _HomePageState extends State<HomePage> {
         );
       }
     } else {
-      // Show alert dialog if WiFi does not match
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -318,6 +370,7 @@ class _HomePageState extends State<HomePage> {
           margin: EdgeInsets.all(8.0),
           child: ListTile(
             contentPadding: EdgeInsets.all(16.0),
+            subtitle: Text('Type : ${config.type}'),
             title: Text(
               "${index + 1}. ${config.name}",
               style: TextStyle(
