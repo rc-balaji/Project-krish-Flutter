@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'Home.dart'; // Ensure this path matches the location of your HomePage widget.
+import '../screens/home_page.dart'; // Ensure this path matches the location of your HomePage widget.
 
 class SplashScreenPage extends StatefulWidget {
   @override

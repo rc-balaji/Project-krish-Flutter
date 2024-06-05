@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'components/VoicePage.dart';
-import 'components/ManualControlsPage.dart';
-import 'components/DroneControlPage.dart'; // Import the new widget
+import '../components/VoicePage.dart';
+import '../components/ManualControlsPage.dart';
+import '../components/DroneControlPage.dart'; // Import the new widget
 
 class ControlPage extends StatefulWidget {
   final Socket socket;

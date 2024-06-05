@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:my_first_app/stream_page.dart';
+import 'package:my_first_app/pages/stream_page.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'ControlPage.dart';
+import '../pages/ControlPage.dart';
 import 'WebcamPage.dart';
 
 class NetworkConfiguration {
@@ -405,12 +405,44 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Home'),
-          backgroundColor: Color.fromARGB(255, 23, 160, 229),
+          title: Text(
+            'Home',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFe60000), Color(0xFFcc0000)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
           actions: [
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => _addOrEditNetwork(),
+            Padding(
+              padding: const EdgeInsets.only(top: 0, right: 8.0),
+              child: Container(
+                width: 25.62,
+                height: 24.55,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Color.fromRGBO(216, 16, 19, 1), // Light red border
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.all(0), // Remove default padding
+                  icon: Icon(Icons.add,
+                      color: Color.fromRGBO(216, 16, 19, 1),
+                      size: 20), // Adjust size if necessary
+                  onPressed: () => _addOrEditNetwork(),
+                ),
+              ),
             ),
           ],
         ),
