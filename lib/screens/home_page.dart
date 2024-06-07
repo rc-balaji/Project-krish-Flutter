@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:my_first_app/screens/widgets/BG.dart';
 import 'package:my_first_app/screens/widgets/floating_widgets.dart';
 import 'models/network_configuration.dart';
 import '../pages/ControlPage.dart';
@@ -59,86 +60,156 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _addOrEditNetwork({NetworkConfiguration? config, int? index}) {
-    TextEditingController nameController =
-        TextEditingController(text: config?.name ?? '');
-    TextEditingController ipController =
-        TextEditingController(text: config?.ipAddress ?? '');
-    String wifiName = _currentWiFi;
-    String selectedType = config?.type ?? 'Node';
+  TextEditingController nameController =
+      TextEditingController(text: config?.name ?? '');
+  TextEditingController ipController =
+      TextEditingController(text: config?.ipAddress ?? '');
+  String wifiName = _currentWiFi; 
+  String selectedType = config?.type ?? 'Node';
 
-    showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setState) {
-          return AlertDialog(
-            title: Text(config == null ? 'Add Network' : 'Edit Network'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(labelText: "Name"),
-                  ),
-                  TextField(
-                    controller: ipController,
-                    decoration: InputDecoration(labelText: "IP Address"),
-                  ),
-                  DropdownButton<String>(
-                    value: selectedType,
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        setState(() {
-                          selectedType = newValue;
-                        });
-                      }
-                    },
-                    items: <String>['Node', 'Cam'].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
+  showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(builder: (context, setState) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, 10),
+                ),
+              ],
             ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Cancel'),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-              TextButton(
-                child: Text('Save'),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
+            width: 350,
+            child: Stack(
+              children: [
+                // Background image with opacity
+                Positioned(
+                  top: -100,
+                  right: -120,
+                  child: Transform.rotate(
+                    angle: -42.21 * 3.1415926535897932 / 180,
+                    child: Opacity(
+                      opacity: 0.38,
+                      child: Image.asset(
+                        'assets/images/drone.png', // Replace with your image path
+                        width: 310,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                // Form contents
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      config == null ? 'Add Network' : 'Edit Network',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: ipController,
+                      decoration: InputDecoration(
+                        labelText: 'IP Address',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    DropdownButton<String>(
+                      value: selectedType,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            selectedType = newValue;
+                          });
+                        }
+                      },
+                      items: <String>['Node', 'Cam']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text('Save'),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            backgroundColor: Colors.white,
+                            side: BorderSide(color: Colors.red),
+                          ),
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text('Cancel'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      });
+    },
+  ).then((confirmed) {
+    if (confirmed == true) {
+      setState(() {
+        if (index == null) {
+          networkConfigs.add(NetworkConfiguration(
+            name: nameController.text,
+            ipAddress: ipController.text,
+            wifiName: wifiName,
+            type: selectedType,
+          ));
+        } else {
+          networkConfigs[index] = NetworkConfiguration(
+            name: nameController.text,
+            ipAddress: ipController.text,
+            wifiName: wifiName,
+            type: selectedType,
           );
-        });
-      },
-    ).then((confirmed) {
-      if (confirmed == true) {
-        setState(() {
-          if (index == null) {
-            networkConfigs.add(NetworkConfiguration(
-              name: nameController.text,
-              ipAddress: ipController.text,
-              wifiName: wifiName,
-              type: selectedType,
-            ));
-          } else {
-            networkConfigs[index] = NetworkConfiguration(
-              name: nameController.text,
-              ipAddress: ipController.text,
-              wifiName: wifiName,
-              type: selectedType,
-            );
-          }
-        });
-        _saveNetworkConfigs();
-      }
-    });
-  }
+        }
+      });
+      _saveNetworkConfigs();
+    }
+  });
+}
 
   Future<void> _showNetworkInfo(NetworkConfiguration config) async {
     await showDialog(
@@ -247,17 +318,51 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
+         appBar: AppBar(
+          title: Text(
+            'Home',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color.fromRGBO(212, 22, 26, 1), Color.fromRGBO(212, 22, 26, 1)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
           actions: [
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => _addOrEditNetwork(),
+            Padding(
+              padding: const EdgeInsets.only(top: 0, right: 8.0),
+              child: Container(
+                width: 28.62,
+                height: 27.55,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Color.fromRGBO(216, 16, 19, 1), // Light red border
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.all(0), // Remove default padding
+                  icon: Icon(Icons.add,
+                      color: Color.fromRGBO(216, 16, 19, 1),
+                      size: 20), // Adjust size if necessary
+                  onPressed: () => _addOrEditNetwork(),
+                ),
+              ),
             ),
           ],
         ),
         body: Column(
           children: [
+            CustomContainer(),
             FloatingWidget(
                 wifiEnabled: _wifiEnabled,
                 locationEnabled: _locationEnabled,
