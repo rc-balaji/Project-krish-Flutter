@@ -212,33 +212,93 @@ class _HomePageState extends State<HomePage> {
 }
 
   Future<void> _showNetworkInfo(NetworkConfiguration config) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Network Information'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Name: ${config.name}'),
-                Text('Type: ${config.type}'),
-                Text('IP Address: ${config.ipAddress}'),
-                Text('WiFi Name: ${config.wifiName}'),
-              ],
-            ),
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Container(
+          padding: EdgeInsets.all(16),
+          
+          width: 350,
+          child: Stack(
+            children: [
+              // Background image with opacity
+              Positioned(
+                top: -100,
+                right: -120,
+                child: Transform.rotate(
+                  angle: -42.21 * 3.1415926535897932 / 180,
+                  child: Opacity(
+                    opacity: 0.38,
+                    child: Image.asset(
+                      'assets/images/drone.png', // Replace with your image path
+                      width: 310,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              // Network information contents
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Network Information',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Name: ${config.name}',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Type: ${config.type}',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'IP Address: ${config.ipAddress}',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'WiFi Name: ${config.wifiName}',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Close'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Close', style: TextStyle(color: Colors.red)),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   Future<void> _connectToNetwork(NetworkConfiguration config) async {
     if (config.wifiName == _currentWiFi) {

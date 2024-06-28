@@ -62,7 +62,7 @@ class _ControlPageState extends State<ControlPage> {
             label: 'Voice',
           ),
         ],
-        backgroundColor: Color.fromARGB(255, 23, 160, 229),
+        backgroundColor: Color.fromRGBO(156, 23, 25, 1),
         selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
         unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
         type: BottomNavigationBarType.fixed,

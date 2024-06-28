@@ -64,8 +64,6 @@ class _VoicePageState extends State<VoicePage> {
       _sendMessage('L');
     } else if (command.contains('right')) {
       _sendMessage('R');
-    } else {
-      print("Unknown Commends");
     }
   }
 
@@ -100,37 +98,46 @@ class _VoicePageState extends State<VoicePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Voice Controls'),
-        backgroundColor: Color.fromARGB(255, 23, 160, 229),
+        backgroundColor: Color.fromRGBO(212, 22, 26, 1),
         actions: [
           IconButton(
-            icon: Icon(Icons.power_settings_new, color: Colors.red),
+            icon: Icon(Icons.power_settings_new, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color.fromRGBO(212, 22, 26, 1), Color.fromRGBO(156, 23, 25, 1)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.25,
-              ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  'Say a command:',
-                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                  'Say a command',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
                 child: Text(
                   _isListening ? 'Listening...' : 'Tap the mic to start',
                   style: TextStyle(
-                      fontSize: 18.0, color: Theme.of(context).primaryColor),
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -138,20 +145,39 @@ class _VoicePageState extends State<VoicePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   _displayedText,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
               SizedBox(height: 20),
-              FloatingActionButton(
-                onPressed: _isListening ? _stopListening : _startListening,
-                child: Icon(_isListening ? Icons.mic_off : Icons.mic),
-                backgroundColor: _isListening ? Colors.red : Colors.blue,
+              GestureDetector(
+                onTap: _isListening ? _stopListening : _startListening,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [Colors.red.shade700, Colors.red.shade500, Colors.red.shade300],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    border: Border.all(color: Colors.white, width: 4.0),
+                  ),
+                  padding: EdgeInsets.all(20.0),
+                  child: Icon(
+                    _isListening ? Icons.mic_off : Icons.mic,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),
         ),
       ),
+      backgroundColor: Colors.red,
     );
   }
 }

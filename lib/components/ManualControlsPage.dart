@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
 
-
 class ManualControlsPage extends StatefulWidget {
   final Socket socket;
   final String ip;
@@ -21,10 +20,9 @@ class _ManualControlsPageState extends State<ManualControlsPage> {
   @override
   void initState() {
     super.initState();
-      setState(() {
-        _socket = widget.socket;
-      });
-    
+    setState(() {
+      _socket = widget.socket;
+    });
   }
 
   void _sendMessage(String message) {
@@ -47,13 +45,22 @@ class _ManualControlsPageState extends State<ManualControlsPage> {
         title: Text('Manual Controls'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.power_settings_new, color: Colors.red),
+            icon: Icon(Icons.power_settings_new, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
         ],
-        backgroundColor: Color.fromARGB(255, 23, 160, 229),
+        backgroundColor: Color.fromRGBO(212, 22, 26, 1),
       ),
-      body: Joystick(onDirectionChanged: _sendMessage),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color.fromRGBO(212, 22, 26, 1), Color.fromRGBO(156, 23, 25, 1)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Joystick(onDirectionChanged: _sendMessage),
+      ),
     );
   }
 }
@@ -98,13 +105,13 @@ class _JoystickState extends State<Joystick> {
     double angle = (atan2(_y, _x) * 180 / pi + 360) % 360;
     String newDirection = "STOP";
     if (angle >= 315 || angle < 45) {
-      newDirection = 'R'; 
+      newDirection = 'R';
     } else if (angle >= 45 && angle < 135) {
-      newDirection = 'B'; 
+      newDirection = 'B';
     } else if (angle >= 135 && angle < 225) {
-      newDirection = 'L'; 
+      newDirection = 'L';
     } else if (angle >= 225 && angle < 315) {
-      newDirection = 'F'; 
+      newDirection = 'F';
     }
 
     if (newDirection != _currentDirection) {

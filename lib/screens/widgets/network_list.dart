@@ -36,6 +36,7 @@ class NetworkList extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Container(
+                  height: 85,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Color(0xFFED1F21), Color(0xFFB51719)],
